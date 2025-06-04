@@ -18,7 +18,7 @@
       <form action="../controllers/AuthController.php" method="POST">
         <div class="mb-3">
           <label>Email</label>
-          <input type="emaill" name="email" required class="form-control">
+          <input type="email" name="email" required class="form-control">
         </div>
         <div class="mb-3">
           <label>Password</label>
