@@ -30,4 +30,15 @@ class Shift {
         $stmt->execute([$staff_id, $month]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function deleteByDate($date) {
+        global $pdo;
+        $stmt = $pdo->prepare("DELETE FROM shifts WHERE shift_date = ?");
+        return $stmt->execute([$date]);
+    }
+
+
+    // In Staff.php
+    
+
 }

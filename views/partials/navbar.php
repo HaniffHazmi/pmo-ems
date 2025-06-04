@@ -21,7 +21,7 @@ $user = $_SESSION['user'] ?? null;
             <a class="nav-link" href="/views/staff_management/staff_index.php">Manage Staff</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/views/admin/manage_shift.php">Manage Shifts</a>
+            <a class="nav-link" href="/views/shift_management/shift_monthly_index.php">Manage Shifts</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/views/admin/manage_salary.php">Manage Salary</a>

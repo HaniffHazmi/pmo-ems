@@ -4,6 +4,13 @@
 require_once __DIR__ . '/../config/database.php';
 
 class Staff {
+
+    public static function getById($id) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM staff WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
     public static function findByEmail($email) {
         global $pdo;
         $stmt = $pdo->prepare("SELECT * FROM staff WHERE email = ?");
