@@ -1,0 +1,44 @@
+AuthController hit
+AuthController hit
+AuthController hit
+AuthController hit
+AuthController hit
+Admin fetched: 
+Staff fetched: Array
+(
+    [id] => 1
+    [0] => 1
+    [name] => Staff One
+    [1] => Staff One
+    [email] => staff@example.com
+    [2] => staff@example.com
+    [password] => $2y$10$FwFksGxUsljh7GJcGr3mKuTG5pTRsBcm0kpW0zV4MnkcgZqXeYuLm
+    [3] => $2y$10$FwFksGxUsljh7GJcGr3mKuTG5pTRsBcm0kpW0zV4MnkcgZqXeYuLm
+    [matric_no] => A123456
+    [4] => A123456
+    [phone_number] => 0123456789
+    [5] => 0123456789
+    [created_at] => 2025-06-04 19:32:09
+    [6] => 2025-06-04 19:32:09
+)
+
+AuthController hit
+Admin fetched: 
+Staff fetched: Array
+(
+    [id] => 1
+    [0] => 1
+    [name] => Staff One
+    [1] => Staff One
+    [email] => staff@example.com
+    [2] => staff@example.com
+    [password] => <hashed_password>
+    [3] => <hashed_password>
+    [matric_no] => A123456
+    [4] => A123456
+    [phone_number] => 0123456789
+    [5] => 0123456789
+    [created_at] => 2025-06-04 19:32:09
+    [6] => 2025-06-04 19:32:09
+)
+
