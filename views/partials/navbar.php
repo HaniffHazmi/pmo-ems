@@ -24,7 +24,7 @@ $user = $_SESSION['user'] ?? null;
             <a class="nav-link" href="/views/shift_management/shift_monthly_index.php">Manage Shifts</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/views/admin/manage_salary.php">Manage Salary</a>
+            <a class="nav-link" href="/views/salary/manage_salary.php">Manage Salary</a>
           </li>
         <?php elseif ($role === 'staff'): ?>
           <li class="nav-item">
