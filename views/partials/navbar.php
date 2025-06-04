@@ -31,7 +31,7 @@ $user = $_SESSION['user'] ?? null;
             <a class="nav-link" href="/views/staff/staff_dashboard.php">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/views/staff/manage_shift.php">Manage Shift</a>
+            <a class="nav-link" href="/views/staff/staff_shift_monthly_index.php">Manage Shift</a>
           </li>
         <?php endif; ?>
       </ul>
