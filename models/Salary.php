@@ -30,8 +30,12 @@ class Salary {
 
     public static function getAllForStaff($staff_id) {
         global $pdo;
-        $stmt = $pdo->prepare("SELECT * FROM salaries WHERE staff_id = ?");
-        $stmt->execute([$staff_id]);
+        $stmt = $pdo->prepare("SELECT s.name AS staff_name, sal.salary_month, sal.amount_paid, sal.paid_at
+        FROM salaries sal
+        JOIN staff s ON sal.staff_id = s.id
+        WHERE sal.staff_id = :staff_id
+        ORDER BY sal.paid_at DESC");
+        $stmt->execute(['staff_id' => $staff_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

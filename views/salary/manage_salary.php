@@ -42,7 +42,7 @@ if (isset($_GET['calculate'])) {
             $salary['calculated_amount'] = $calculated_amount;
             $salary['staff_id'] = $staff_id;
             $salary['salary_month'] = $month;
-            $message = '<div class="alert alert-info">Calculated salary: $' . number_format($calculated_amount, 2) . '</div>';
+            $message = '<div class="alert alert-info">Calculated salary: RM' . number_format($calculated_amount, 2) . '</div>';
         } catch (Exception $e) {
             $message = '<div class="alert alert-danger">Calculation error: ' . $e->getMessage() . '</div>';
         }
@@ -195,7 +195,7 @@ try {
                                             <tr>
                                                 <td><?= htmlspecialchars($record['staff_name'] ?? 'Unknown') ?></td>
                                                 <td class="month-name"><?= $months[$record['salary_month']] ?? $record['salary_month'] ?></td>
-                                                <td>$<?= number_format($record['amount_paid'], 2) ?></td>
+                                                <td>RM<?= number_format($record['amount_paid'], 2) ?></td>
                                                 <td><?= date('M j, Y H:i', strtotime($record['paid_at'])) ?></td>
                                             </tr>
                                         <?php endforeach; ?>
