@@ -69,7 +69,7 @@ foreach ($staffStats as $index => $stat) {
   <div class="dashboard-container">
     <div class="welcome-message">
       <div class="welcome-content">
-        <h1 class="dashboard-title">Welcome to Parcel Management System</h1>
+        <h1 class="dashboard-title">Welcome to Employee Management System</h1>
         <p class="dashboard-subtitle">Group 4 Section 11</p>
         <div class="welcome-stats">
           <div class="welcome-stat-item">
@@ -121,6 +121,12 @@ foreach ($staffStats as $index => $stat) {
         <div class="stat-value"><?= date('F Y') ?></div>
       </div>
     </div>
+    <div class="text-end me-3 mt-3">
+      <a href="/security/create_backup.php" class="btn btn-outline-danger">
+        <i class="fas fa-database me-2"></i>Backup Database
+      </a>
+    </div>
+
 
     <div class="row mt-4">
       <div class="col-md-6">

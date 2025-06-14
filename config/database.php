@@ -2,7 +2,7 @@
 // config/database.php
 
 $host = 'localhost';
-$db   = 'pmo-ems';
+$db   = 'pmo_ems';
 $user = 'root';
 $pass = ''; // change if needed
 

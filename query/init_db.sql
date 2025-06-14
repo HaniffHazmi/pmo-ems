@@ -1,6 +1,6 @@
 -- Create the database
-CREATE DATABASE IF NOT EXISTS pmo-ems CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE pmo-ems;
+CREATE DATABASE IF NOT EXISTS pmo_ems CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE pmo_ems;
 
 -- Create admins table
 CREATE TABLE admins (
