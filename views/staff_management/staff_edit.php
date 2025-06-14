@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone_number = $_POST['phone_number'];
 
     $stmt = $pdo->prepare("UPDATE staff SET name = ?, email = ?, matric_no = ?, phone_number = ? WHERE id = ?");
-    $stmt->execute([$name, $email, $matric_no, $phone_number, $id]);
-
-    $_SESSION['success'] = "Staff updated successfully!";
-    header("Location: staff_read.php?id=$id");
-    exit;
+    if ($stmt->execute([$name, $email, $matric_no, $phone_number, $id])) {
+        $_SESSION['success'] = "Staff updated successfully!";
+        header("Location: staff_index.php");
+        exit;
+    }
 }
 ?>
 
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="phone_number" value="<?= htmlspecialchars($staff['phone_number']) ?>" class="form-control">
       </div>
       <button type="submit" class="btn btn-success">Update</button>
-      <a href="staff_read.php?id=<?= $staff['id'] ?>" class="btn btn-secondary">Cancel</a>
+      <a href="staff_index.php" class="btn btn-secondary">Cancel</a>
     </form>
   </div>
 </body>

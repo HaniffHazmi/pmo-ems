@@ -1,90 +1,103 @@
 <?php
 session_start();
-require_once '../../config/database.php';
+require_once '../../models/Staff.php';
 
-// Pagination setup
-$limit = 10; // Number of staff per page
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$start = ($page - 1) * $limit;
+include '../../views/partials/navbar.php';
 
-// Fetch staff list
-$stmt = $pdo->prepare("SELECT * FROM staff ORDER BY created_at DESC LIMIT :start, :limit");
-$stmt->bindValue(':start', $start, PDO::PARAM_INT);
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->execute();
-$staffList = $stmt->fetchAll();
-
-// Total staff count for pagination
-$totalStmt = $pdo->query("SELECT COUNT(*) FROM staff");
-$totalStaff = $totalStmt->fetchColumn();
-$totalPages = ceil($totalStaff / $limit);
+$staff = Staff::getAll();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Staff Management | PMO-EMS</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/assets/css/staff-management.css" />
 </head>
 <body>
-  <?php include '../partials/navbar.php'; ?>
-
-  <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>Staff Management</h2>
-      <a href="staff_create.php" class="btn btn-success">+ Add New Staff</a>
+<div class="staff-container">
+    <div class="staff-header">
+        <h1 class="staff-title">Staff Management</h1>
+        <p class="staff-subtitle">Manage your staff members and their details</p>
     </div>
 
-    <?php if (count($staffList) === 0): ?>
-      <div class="alert alert-warning">No staff records found.</div>
-    <?php else: ?>
-      <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Matric No</th>
-            <th>Phone</th>
-            <th>Created At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($staffList as $staff): ?>
+    <div class="search-filter-container">
+        <div class="form-group">
+            <label for="search" class="form-label">Search Staff</label>
+            <input type="text" id="search" class="form-control" placeholder="Search by name or ID...">
+        </div>
+        <a href="staff_create.php" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Add New Staff
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table" id="staffTable">
+            <thead>
             <tr>
-              <td><?= htmlspecialchars($staff['id']) ?></td>
-              <td><?= htmlspecialchars($staff['name']) ?></td>
-              <td><?= htmlspecialchars($staff['email']) ?></td>
-              <td><?= htmlspecialchars($staff['matric_no']) ?></td>
-              <td><?= htmlspecialchars($staff['phone_number']) ?></td>
-              <td><?= htmlspecialchars($staff['created_at']) ?></td>
-              <td>
-                <a href="staff_read.php?id=<?= $staff['id'] ?>" class="btn btn-sm btn-info">View</a>
-                <a href="staff_edit.php?id=<?= $staff['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-                <form action="staff_delete.php" method="POST" onsubmit="return confirm('Are you sure to delete this staff?');" style="display:inline;">
-                    <input type="hidden" name="id" value="<?= $staff['id'] ?>">
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                </form>
-
-              </td>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
             </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+            <?php foreach ($staff as $member): ?>
+                <tr>
+                    <td data-label="ID"><?= htmlspecialchars($member['id']) ?></td>
+                    <td data-label="Name"><?= htmlspecialchars($member['name']) ?></td>
+                    <td data-label="Email"><?= htmlspecialchars($member['email']) ?></td>
+                    <td data-label="Phone"><?= htmlspecialchars($member['phone_number']) ?></td>
+                    <td data-label="Actions">
+                        <div class="action-buttons">
+                            <a href="staff_read.php?id=<?= $member['id'] ?>" class="btn btn-primary" title="View Details">
+                                <i class="fas fa-eye"></i>
+                                <span>View</span>
+                            </a>
+                            <a href="staff_edit.php?id=<?= $member['id'] ?>" class="btn btn-success" title="Edit Staff">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </a>
+                            <a href="staff_delete.php?id=<?= $member['id'] ?>" class="btn btn-danger" 
+                               onclick="return confirm('Are you sure you want to delete this staff member?')"
+                               title="Delete Staff">
+                                <i class="fas fa-trash"></i>
+                                <span>Delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-      <!-- Pagination links -->
-      <nav>
-        <ul class="pagination">
-          <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-            <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-              <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-            </li>
-          <?php endfor; ?>
-        </ul>
-      </nav>
-    <?php endif; ?>
-  </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    const table = document.getElementById('staffTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const id = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+
+            const matchesSearch = name.includes(searchTerm) || id.includes(searchTerm);
+            row.style.display = matchesSearch ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+});
+</script>
 </body>
 </html>

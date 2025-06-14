@@ -1,0 +1,396 @@
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #2c3e50;
+  --accent-color: #e74c3c;
+  --light-bg: #f8f9fa;
+  --border-color: #e9ecef;
+  --success-color: #2ecc71;
+  --warning-color: #f1c40f;
+  --danger-color: #e74c3c;
+  --text-primary: #2c3e50;
+  --text-secondary: #6c757d;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+body {
+  background-color: var(--light-bg);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Header Styles */
+h2, h3 {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Form Styles */
+.form-container {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Table Styles */
+.table-responsive {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin: 2rem 0;
+}
+
+.table {
+  margin: 0;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th {
+  background: linear-gradient(135deg, var(--secondary-color), #34495e);
+  color: white;
+  font-weight: 500;
+  padding: 1.2rem 1rem;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  border: none;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(74, 144, 226, 0.05);
+}
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.8rem 1.5rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), #2980b9);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2980b9, #2c3e50);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-color), #27ae60);
+  border: none;
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #27ae60, #219a52);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Shift Type Badges */
+.badge {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.badge-evening {
+  background: linear-gradient(135deg, #f1c40f, #f39c12);
+  color: white;
+}
+
+.badge-night {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  color: white;
+}
+
+/* Alert Styles */
+.alert {
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #ff6b6b, #e74c3c);
+  color: white;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem auto;
+  }
+
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: white;
+  }
+
+  .table td {
+    display: block;
+    text-align: right;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .table td:last-child {
+    border-bottom: none;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Form Check Styles */
+.form-check {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.form-check:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(74, 144, 226, 0.05);
+}
+
+.form-check-input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.2rem;
+}
+
+.form-check-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-left: 0.5rem;
+}
+
+/* Month/Year Selector */
+.month-year-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.month-year-selector .form-group {
+  flex: 1;
+}
+
+@media (max-width: 576px) {
+  .month-year-selector {
+    flex-direction: column;
+  }
+}
+
+/* Filter Dropdown Styles */
+.dropdown {
+    margin-left: 1rem;
+}
+
+.dropdown-toggle {
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-toggle:hover {
+    background: linear-gradient(135deg, #2980b9, #2c3e50);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-md);
+    padding: 0.5rem;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(74, 144, 226, 0.1);
+    color: var(--primary-color);
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: var(--border-color);
+}
+
+/* Month/Year Selector with Filter Layout */
+.d-flex.justify-content-between {
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+    }
+
+    .dropdown {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .dropdown-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Table Separator Styles */
+.table-separator td {
+    padding: 0 !important;
+    border: none !important;
+}
+
+.separator {
+    background: linear-gradient(135deg, var(--secondary-color), #34495e);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.separator::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+/* Update Past Date Styles */
+.past-date {
+    opacity: 0.7;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.past-date td {
+    color: var(--text-secondary);
+}
+
+.past-date .badge {
+    opacity: 0.8;
+}
+
+.past-date .text-muted {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.past-date .text-muted i {
+    font-size: 1rem;
+} 

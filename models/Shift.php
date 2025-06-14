@@ -37,6 +37,12 @@ class Shift {
         return $stmt->execute([$date]);
     }
 
+    public static function getAllByStaffId($staff_id) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM shifts WHERE staff_id = ? ORDER BY shift_date DESC");
+        $stmt->execute([$staff_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // In Staff.php
     

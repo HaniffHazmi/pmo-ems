@@ -48,4 +48,28 @@ class Staff {
         $stmt = $pdo->prepare("DELETE FROM staff WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public static function getShiftStatistics($month = null) {
+        global $pdo;
+        
+        if ($month === null) {
+            $month = date('m');
+        }
+        
+        // Get yesterday's date
+        $yesterday = date('Y-m-d', strtotime('-1 day'));
+        
+        $query = "SELECT s.staff_id, st.name, COUNT(*) as total_shifts 
+                 FROM shifts s 
+                 JOIN staff st ON s.staff_id = st.id 
+                 WHERE MONTH(s.shift_date) = ? 
+                 AND s.shift_date <= ?
+                 GROUP BY s.staff_id, st.name 
+                 ORDER BY total_shifts DESC";
+        
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([$month, $yesterday]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
