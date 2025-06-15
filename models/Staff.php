@@ -2,6 +2,7 @@
 // models/Staff.php
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/TwoFactorAuth.php';
 
 class Staff {
 
@@ -31,16 +32,45 @@ class Staff {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function create($data) {
+    public static function create($name, $email, $password, $matricNo = null, $phoneNumber = null) {
         global $pdo;
-        $stmt = $pdo->prepare("INSERT INTO staff (name, email, password, matric_no, phone_number) VALUES (?, ?, ?, ?, ?)");
-        return $stmt->execute([
-            $data['name'],
-            $data['email'],
-            $data['password'],
-            $data['matric_no'],
-            $data['phone_number']
-        ]);
+        
+        try {
+            $pdo->beginTransaction();
+            
+            // Insert staff member
+            $stmt = $pdo->prepare("INSERT INTO staff (name, email, password, matric_no, phone_number) 
+                                  VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$name, $email, $password, $matricNo, $phoneNumber]);
+            $staffId = $pdo->lastInsertId();
+            
+            // Generate and setup 2FA
+            $secret = TwoFactorAuth::generateSecret();
+            if (TwoFactorAuth::setup($staffId, 'staff', $secret)) {
+                if (TwoFactorAuth::enable($staffId, 'staff')) {
+                    $pdo->commit();
+                    return [
+                        'success' => true,
+                        'staff_id' => $staffId,
+                        'secret' => $secret
+                    ];
+                }
+            }
+            
+            // If we get here, something went wrong with 2FA setup
+            $pdo->rollBack();
+            return [
+                'success' => false,
+                'error' => 'Failed to setup 2FA'
+            ];
+            
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
     }
 
     public static function delete($id) {

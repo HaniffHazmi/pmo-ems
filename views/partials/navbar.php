@@ -59,6 +59,11 @@ $user = $_SESSION['user'] ?? null;
             </span>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="/views/settings/two_factor_setup.php">
+              <i class="fas fa-shield-alt me-1"></i> 2FA Settings
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/controllers/logout.php" onclick="return confirm('Are you sure you want to logout?');">
               <i class="fas fa-sign-out-alt me-1"></i> Logout
             </a>

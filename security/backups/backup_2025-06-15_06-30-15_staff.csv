@@ -1,0 +1,4 @@
+id,name,email,password,matric_no,phone_number,created_at
+1,"Staff One",staff@example.com,staff123,A123456,0123456788,"2025-06-05 00:26:14"
+2,Ashraff,muhdashraffazhn@gmail.com,Ashraff1234@,AI220353,01165060730,"2025-06-15 00:53:23"
+3,Olin,olin@gmail.com,Olin1234,AI220254,123456789,"2025-06-15 01:17:00"
