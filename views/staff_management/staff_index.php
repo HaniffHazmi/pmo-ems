@@ -62,12 +62,13 @@ $staff = Staff::getAll();
                                 <i class="fas fa-edit"></i>
                                 <span>Edit</span>
                             </a>
-                            <a href="staff_delete.php?id=<?= $member['id'] ?>" class="btn btn-danger" 
-                               onclick="return confirm('Are you sure you want to delete this staff member?')"
-                               title="Delete Staff">
-                                <i class="fas fa-trash"></i>
-                                <span>Delete</span>
-                            </a>
+                            <form method="POST" action="staff_delete.php" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this staff member? This will also delete all their shifts and salary records.');">
+                                <input type="hidden" name="id" value="<?= $member['id'] ?>">
+                                <button type="submit" class="btn btn-danger" title="Delete Staff">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Delete</span>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>
