@@ -27,6 +27,20 @@ if (!$staff) {
   <meta charset="UTF-8">
   <title>Staff Details | PMO-EMS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script>
+    function togglePassword() {
+      const passwordCell = document.getElementById('passwordCell');
+      const viewButton = document.getElementById('viewPasswordBtn');
+      
+      if (passwordCell.textContent === '••••••••') {
+        passwordCell.textContent = '<?= htmlspecialchars($staff['password']) ?>';
+        viewButton.textContent = 'Hide';
+      } else {
+        passwordCell.textContent = '••••••••';
+        viewButton.textContent = 'View';
+      }
+    }
+  </script>
 </head>
 <body>
   <?php include '../partials/navbar.php'; ?>
@@ -53,6 +67,13 @@ if (!$staff) {
       <tr>
         <th>Phone Number</th>
         <td><?= htmlspecialchars($staff['phone_number']) ?></td>
+      </tr>
+      <tr>
+        <th>Password</th>
+        <td>
+          <span id="passwordCell">••••••••</span>
+          <button id="viewPasswordBtn" onclick="togglePassword()" class="btn btn-sm btn-secondary ms-2">View</button>
+        </td>
       </tr>
       <tr>
         <th>Created At</th>

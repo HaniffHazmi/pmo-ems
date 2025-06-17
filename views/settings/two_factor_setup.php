@@ -29,6 +29,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: two_factor_setup.php');
             exit;
         }
+    } elseif (isset($_POST['change_password'])) {
+        $oldPassword = $_POST['old_password'];
+        $newPassword = $_POST['new_password'];
+        $confirmPassword = $_POST['confirm_password'];
+
+        // Get the stored password from database
+        $tableName = $userType === 'staff' ? 'staff' : 'admin';
+        $stmt = $pdo->prepare("SELECT password FROM {$tableName} WHERE id = ?");
+        $stmt->execute([$userId]);
+        $storedPassword = $stmt->fetchColumn();
+
+        // Check if the entered old password matches the stored password
+        if ($oldPassword !== $storedPassword) {
+            $_SESSION['error'] = "Current password is incorrect.";
+        } elseif ($newPassword !== $confirmPassword) {
+            $_SESSION['error'] = "New passwords do not match.";
+        } else {
+            // Save the new password to database
+            $updateStmt = $pdo->prepare("UPDATE {$tableName} SET password = ? WHERE id = ?");
+            if ($updateStmt->execute([$newPassword, $userId])) {
+                $_SESSION['success'] = "Password has been updated successfully.";
+            } else {
+                $_SESSION['error'] = "Failed to update password.";
+            }
+        }
+        header('Location: two_factor_setup.php');
+        exit;
     }
 }
 
@@ -42,6 +69,19 @@ $secret = $_SESSION['temp_2fa_secret'] ?? $twoFactorStatus['secret_key'] ?? null
     <title>Two-Factor Authentication Setup | PMO-EMS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .password-field {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
     <?php include '../partials/navbar.php'; ?>
@@ -104,10 +144,75 @@ $secret = $_SESSION['temp_2fa_secret'] ?? $twoFactorStatus['secret_key'] ?? null
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- Change Password Card -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Change Password</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="old_password" class="form-label">Current Password</label>
+                                <div class="password-field">
+                                    <input type="password" class="form-control" id="old_password" name="old_password" required>
+                                    <i class="fas fa-eye password-toggle" onclick="togglePassword('old_password')"></i>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">New Password</label>
+                                <div class="password-field">
+                                    <input type="password" class="form-control" id="new_password" name="new_password" required>
+                                    <i class="fas fa-eye password-toggle" onclick="togglePassword('new_password')"></i>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                <div class="password-field">
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                    <i class="fas fa-eye password-toggle" onclick="togglePassword('confirm_password')"></i>
+                                </div>
+                            </div>
+                            <button type="submit" name="change_password" class="btn btn-primary">Change Password</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+
+        // Password toggle function
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html> 

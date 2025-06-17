@@ -19,6 +19,7 @@ CREATE TABLE staff (
     password VARCHAR(255) NOT NULL,
     matric_no VARCHAR(50),
     phone_number VARCHAR(20),
+    salary DECIMAL(8,2) DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 

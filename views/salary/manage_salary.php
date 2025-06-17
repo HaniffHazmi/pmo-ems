@@ -22,24 +22,30 @@ $selectedMonth = $_POST['salary_month'] ?? $currentMonth;
 $selectedYear = $_POST['salary_year'] ?? $currentYear;
 
 // Get selected staff ID
-$selectedStaffId = $_POST['staff_id'] ?? null;
+$selectedStaffId = $_POST['staff_id'] ?? 'all';
 
-// Calculate salary if staff and month are selected
-$calculatedSalary = null;
-if ($selectedStaffId && $selectedMonth) {
-    $calculatedSalary = Salary::calculateMonthlySalary($selectedStaffId, $selectedMonth);
+// Get salary summary for all staff
+$salarySummary = [];
+if ($selectedStaffId === 'all') {
+    $salarySummary = Salary::getSalarySummary($selectedMonth, $selectedYear);
+} else {
+    $salarySummary = Salary::getSalarySummary($selectedMonth, $selectedYear, $selectedStaffId);
 }
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
     $staffId = $_POST['staff_id'];
-    $month = $_POST['salary_month'];
-    $amount = $_POST['amount_paid'];
-
-    if (Salary::recordPayment($staffId, $month, $amount)) {
-        $_SESSION['success'] = "Payment recorded successfully!";
+    if ($staffId === 'all') {
+        $_SESSION['error'] = "Please select a specific staff member to record payment.";
     } else {
-        $_SESSION['error'] = "Failed to record payment.";
+        $month = $_POST['salary_month'];
+        $amount = $_POST['amount_paid'];
+
+        if (Salary::recordPayment($staffId, $month, $amount)) {
+            $_SESSION['success'] = "Payment recorded successfully!";
+        } else {
+            $_SESSION['error'] = "Failed to record payment.";
+        }
     }
     header("Location: manage_salary.php");
     exit;
@@ -47,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
 
 // Get payment history for selected staff
 $paymentHistory = [];
-if ($selectedStaffId) {
+if ($selectedStaffId && $selectedStaffId !== 'all') {
     $paymentHistory = Salary::getAllForStaff($selectedStaffId);
 }
 
@@ -79,8 +85,8 @@ for ($i = 1; $i <= 12; $i++) {
             <form method="POST" class="row g-3">
                 <div class="col-md-4">
                     <label for="staff_id" class="form-label">Staff Member</label>
-                    <select class="form-select" id="staff_id" name="staff_id" required>
-                        <option value="">Select Staff</option>
+                    <select class="form-select" id="staff_id" name="staff_id">
+                        <option value="all" <?= ($selectedStaffId === 'all') ? 'selected' : '' ?>>All Staff</option>
                         <?php foreach ($staff as $member): ?>
                             <option value="<?= $member['id'] ?>" 
                                 <?= ($selectedStaffId == $member['id']) ? 'selected' : '' ?>>
@@ -116,35 +122,76 @@ for ($i = 1; $i <= 12; $i++) {
 
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-calculator"></i> Calculate Salary
+                        <i class="fas fa-sync"></i> Refresh
                     </button>
                 </div>
             </form>
         </div>
 
-        <?php if ($calculatedSalary !== null): ?>
-            <div class="form-container">
-                <h3 class="mb-4">Salary Details</h3>
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <p class="mb-2">Calculated Amount:</p>
-                        <div class="amount-display">
-                            RM <?= number_format($calculatedSalary, 2) ?>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <form method="POST" class="row g-3">
-                            <input type="hidden" name="staff_id" value="<?= $selectedStaffId ?>">
-                            <input type="hidden" name="salary_month" value="<?= $selectedMonth ?>">
-                            <input type="hidden" name="amount_paid" value="<?= $calculatedSalary ?>">
-                            <div class="col-12">
-                                <button type="submit" name="record_payment" class="btn btn-success">
-                                    <i class="fas fa-check"></i> Record Payment
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+        <?php if (!empty($salarySummary)): ?>
+            <div class="table-responsive mt-4">
+                <h3 class="mb-4">Salary Summary for <?= date('F Y', mktime(0, 0, 0, $selectedMonth, 1, $selectedYear)) ?></h3>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Staff Name</th>
+                            <th class="text-end">Total Salary</th>
+                            <th class="text-end">Paid</th>
+                            <th class="text-end">Unpaid</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $totalSalary = 0;
+                        $totalPaid = 0;
+                        $totalUnpaid = 0;
+                        foreach ($salarySummary as $salary): 
+                            $unpaid = $salary['total_salary'] - $salary['amount_paid'];
+                            $totalSalary += $salary['total_salary'];
+                            $totalPaid += $salary['amount_paid'];
+                            $totalUnpaid += $unpaid;
+                        ?>
+                            <tr>
+                                <td><?= htmlspecialchars($salary['staff_name']) ?></td>
+                                <td class="text-end">RM <?= number_format($salary['total_salary'], 2) ?></td>
+                                <td class="text-end">RM <?= number_format($salary['amount_paid'], 2) ?></td>
+                                <td class="text-end">RM <?= number_format($unpaid, 2) ?></td>
+                                <td>
+                                    <?php if ($salary['amount_paid'] >= $salary['total_salary']): ?>
+                                        <span class="badge bg-success">Paid</span>
+                                    <?php elseif ($salary['amount_paid'] > 0): ?>
+                                        <span class="badge bg-warning">Partially Paid</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-danger">Unpaid</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php if ($salary['amount_paid'] < $salary['total_salary']): ?>
+                                        <form method="POST" class="d-inline">
+                                            <input type="hidden" name="staff_id" value="<?= $salary['staff_id'] ?>">
+                                            <input type="hidden" name="salary_month" value="<?= $selectedMonth ?>">
+                                            <input type="hidden" name="amount_paid" value="<?= $salary['total_salary'] ?>">
+                                            <button type="submit" name="record_payment" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check"></i> Pay
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <tr class="table-info">
+                            <td><strong>Total</strong></td>
+                            <td class="text-end"><strong>RM <?= number_format($totalSalary, 2) ?></strong></td>
+                            <td class="text-end"><strong>RM <?= number_format($totalPaid, 2) ?></strong></td>
+                            <td class="text-end"><strong>RM <?= number_format($totalUnpaid, 2) ?></strong></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         <?php endif; ?>
 

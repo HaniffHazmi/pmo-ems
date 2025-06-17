@@ -38,4 +38,68 @@ class Salary {
         $stmt->execute(['staff_id' => $staff_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function getUnpaidSalaries($month, $year) {
+        global $pdo;
+        
+        $query = "SELECT s.id as staff_id, s.name as staff_name, 
+                        COALESCE(sa.amount_paid, 0) as calculated_amount
+                 FROM staff s
+                 LEFT JOIN (
+                     SELECT staff_id, amount_paid
+                     FROM salaries
+                     WHERE salary_month = ? AND YEAR(paid_at) = ?
+                 ) sa ON s.id = sa.staff_id
+                 WHERE sa.staff_id IS NULL
+                 ORDER BY s.name";
+                 
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([$month, $year]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getSalarySummary($month, $year, $staffId = null) {
+        global $pdo;
+        
+        $query = "SELECT 
+                    s.id as staff_id, 
+                    s.name as staff_name,
+                    s.salary as base_salary,
+                    COALESCE(shift_totals.total_amount, 0) as shift_amount,
+                    (s.salary + COALESCE(shift_totals.total_amount, 0)) as total_salary,
+                    COALESCE(sp.amount_paid, 0) as amount_paid
+                 FROM staff s
+                 LEFT JOIN (
+                     SELECT 
+                        staff_id,
+                        SUM(CASE 
+                            WHEN shift_type = 'evening' THEN 12
+                            WHEN shift_type = 'night' THEN 8
+                            ELSE 0
+                        END) as total_amount
+                     FROM shifts
+                     WHERE MONTH(shift_date) = ? AND YEAR(shift_date) = ?
+                     GROUP BY staff_id
+                 ) shift_totals ON s.id = shift_totals.staff_id
+                 LEFT JOIN (
+                     SELECT staff_id, SUM(amount_paid) as amount_paid
+                     FROM salaries
+                     WHERE salary_month = ? AND YEAR(paid_at) = ?
+                     GROUP BY staff_id
+                 ) sp ON s.id = sp.staff_id
+                 WHERE 1=1";
+        
+        $params = [$month, $year, $month, $year];
+        
+        if ($staffId && $staffId !== 'all') {
+            $query .= " AND s.id = ?";
+            $params[] = $staffId;
+        }
+        
+        $query .= " ORDER BY s.name";
+                 
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
